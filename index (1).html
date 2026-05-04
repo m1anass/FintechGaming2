@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FinTech Gaming Zone</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Rajdhani',sans-serif;color:#e2e8f0;overflow-x:hidden;background:#050510;}
+
+/* CANVAS FIXED BEHIND EVERYTHING */
+#gc{
+  position:fixed;
+  top:0;left:0;
+  width:100vw;height:100vh;
+  z-index:0;
+  pointer-events:none;
+  display:block;
+}
+
+/* ALL CONTENT ABOVE CANVAS */
+.navbar,.hero,.section,.footer,.modal-overlay{position:relative;z-index:2;}
+
+:root{
+  --accent:#00f5a0;--accent2:#7c3aed;--accent3:#f59e0b;
+  --card:rgba(15,15,42,0.82);--border:#1e1e4a;--muted:#64748b;--text:#e2e8f0;
+}
+h1,h2,h3,.logo,.navbar{font-family:'Orbitron',monospace;}
+.highlight{color:var(--accent);}
+.neon-text{color:var(--accent);text-shadow:0 0 14px rgba(0,245,160,.8),0 0 40px rgba(0,245,160,.3);}
+
+/* NAVBAR */
+.navbar{
+  position:fixed!important;top:0;left:0;right:0;z-index:999!important;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 5%;
+  background:rgba(5,5,16,0.88);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-size:1.15rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
+.nav-links{list-style:none;display:flex;gap:28px;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.83rem;letter-spacing:1px;text-transform:uppercase;transition:color .3s;}
+.nav-links a:hover{color:var(--accent);}
+.hamburger{display:none;font-size:1.5rem;cursor:pointer;color:var(--accent);}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:120px 5% 60px;
+  background:radial-gradient(ellipse at 20% 50%,rgba(124,58,237,.1) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 50%,rgba(0,245,160,.07) 0%,transparent 55%);
+}
+.hero-content{text-align:center;max-width:680px;}
+.hero-tag{
+  display:inline-block;background:rgba(0,245,160,.1);border:1px solid rgba(0,245,160,.3);
+  color:var(--accent);padding:6px 20px;border-radius:100px;font-size:.78rem;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:22px;
+  animation:fadeDown .9s ease both;
+}
+.hero-title{
+  font-size:clamp(2.2rem,7vw,5rem);font-weight:900;line-height:1.1;color:#fff;
+  margin-bottom:18px;animation:fadeUp .9s ease .2s both;
+}
+.hero-sub{font-size:1.1rem;color:var(--muted);margin-bottom:38px;animation:fadeUp .9s ease .4s both;}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeUp .9s ease .6s both;}
+.float-badge{
+  position:absolute;background:rgba(10,10,31,.92);border:1px solid var(--border);
+  padding:10px 20px;border-radius:100px;font-size:.8rem;font-weight:600;white-space:nowrap;z-index:3;
+}
+.b1{top:28%;left:4%;animation:floatB 3s ease-in-out infinite;}
+.b2{top:68%;left:6%;animation:floatB 3.5s ease-in-out infinite .5s;}
+.b3{top:28%;right:4%;animation:floatB 4s ease-in-out infinite 1s;}
+.b4{top:68%;right:6%;animation:floatB 3.2s ease-in-out infinite 1.5s;}
+@keyframes floatB{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+/* BUTTONS */
+.btn-primary{
+  display:inline-block;background:linear-gradient(135deg,#00f5a0,#00c97a);
+  color:#050510;font-family:'Orbitron',monospace;font-weight:700;font-size:.8rem;
+  padding:13px 30px;border-radius:8px;text-decoration:none;letter-spacing:1px;
+  border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 22px rgba(0,245,160,.45);}
+.btn-primary.sm{padding:10px 20px;font-size:.75rem;}
+.btn-primary.full{width:100%;text-align:center;margin-top:8px;display:block;}
+.btn-outline{
+  display:inline-block;background:transparent;color:var(--accent);
+  font-family:'Orbitron',monospace;font-weight:700;font-size:.8rem;
+  padding:13px 30px;border-radius:8px;border:1px solid var(--accent);
+  text-decoration:none;letter-spacing:1px;transition:background .2s,transform .2s;
+}
+.btn-outline:hover{background:rgba(0,245,160,.08);transform:translateY(-2px);}
+
+/* SECTIONS */
+.section{padding:90px 5%;}
+.sec-hd{text-align:center;margin-bottom:54px;}
+.sec-hd h2{font-size:clamp(1.6rem,4vw,2.6rem);color:#fff;margin-bottom:12px;}
+.sec-hd p{color:var(--muted);font-size:1rem;}
+
+/* glass bg for sections */
+.games-section{background:rgba(10,10,31,.65);backdrop-filter:blur(4px);}
+.pricing-section{background:rgba(5,5,16,.65);backdrop-filter:blur(4px);}
+.booking-section{background:rgba(10,10,31,.65);backdrop-filter:blur(4px);}
+.contact-section{background:rgba(5,5,16,.65);backdrop-filter:blur(4px);}
+
+/* GAMES */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;max-width:1100px;margin:0 auto;}
+.game-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:28px 20px;text-align:center;
+  transition:transform .3s,border-color .3s,box-shadow .3s;
+  backdrop-filter:blur(10px);
+}
+.game-card:hover{transform:translateY(-8px);border-color:var(--accent);box-shadow:0 0 22px rgba(0,245,160,.3);}
+.gi{font-size:2.8rem;margin-bottom:14px;}
+.game-card h3{font-size:.98rem;color:#fff;margin-bottom:9px;}
+.game-card p{color:var(--muted);font-size:.84rem;margin-bottom:13px;}
+.gtag{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#a78bfa;font-size:.7rem;padding:4px 12px;border-radius:100px;}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;max-width:900px;margin:0 auto;}
+.price-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:32px 24px;text-align:center;position:relative;transition:transform .3s;
+  backdrop-filter:blur(10px);
+}
+.price-card:hover{transform:translateY(-6px);}
+.price-card.feat{border-color:var(--accent);box-shadow:0 0 22px rgba(0,245,160,.25);}
+.pop-badge{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:var(--accent);color:#050510;font-family:'Orbitron',monospace;
+  font-size:.68rem;font-weight:700;padding:4px 16px;border-radius:100px;white-space:nowrap;
+}
+.price-card h3{font-size:1.1rem;color:#fff;margin-bottom:12px;}
+.price{font-size:1.85rem;font-family:'Orbitron',monospace;color:var(--accent);font-weight:700;}
+.price span{font-size:.82rem;color:var(--muted);}
+.pf{list-style:none;margin:20px 0;text-align:left;}
+.pf li{padding:7px 0;border-bottom:1px solid var(--border);font-size:.86rem;}
+.pf li:last-child{border-bottom:none;}
+
+/* BOOKING */
+.book-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;max-width:1000px;margin:0 auto;}
+.book-form-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;backdrop-filter:blur(10px);}
+.bform{display:flex;flex-direction:column;gap:14px;}
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fg label{font-size:.75rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-family:'Orbitron',monospace;}
+.fg input,.fg select{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);
+  padding:11px 14px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-size:.95rem;outline:none;transition:border-color .3s;
+}
+.fg input:focus,.fg select:focus{border-color:var(--accent);}
+.fg select option{background:#0f0f2a;}
+.pay-info{display:flex;flex-direction:column;gap:20px;}
+.pay-card{background:linear-gradient(135deg,rgba(0,245,160,.05),rgba(124,58,237,.05));border:1px solid rgba(0,245,160,.25);border-radius:16px;padding:24px;backdrop-filter:blur(10px);}
+.pay-card h3{font-size:.98rem;color:#fff;margin-bottom:16px;font-family:'Orbitron',monospace;}
+.ep-box{background:rgba(0,0,0,.3);border-radius:10px;padding:14px;margin-bottom:16px;text-align:center;}
+.ep-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.ep-num{font-family:'Orbitron',monospace;font-size:1.35rem;color:var(--accent);font-weight:700;margin:4px 0;}
+.ep-name{font-size:.8rem;color:var(--text);}
+.ep-steps h4{font-size:.75rem;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.ep-steps ol{padding-left:15px;}
+.ep-steps li{font-size:.86rem;padding:3px 0;}
+.btn-wa{display:block;margin-top:16px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-family:'Orbitron',monospace;font-size:.73rem;font-weight:700;text-align:center;padding:11px;border-radius:8px;text-decoration:none;transition:opacity .2s;}
+.btn-wa:hover{opacity:.9;}
+.rules-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;backdrop-filter:blur(10px);}
+.rules-box h4{font-family:'Orbitron',monospace;font-size:.75rem;color:var(--accent3);margin-bottom:10px;text-transform:uppercase;}
+.rules-box ul{list-style:none;}
+.rules-box li{font-size:.86rem;color:var(--muted);padding:5px 0 5px 14px;border-bottom:1px solid var(--border);position:relative;}
+.rules-box li::before{content:'›';position:absolute;left:0;color:var(--accent);}
+.rules-box li:last-child{border-bottom:none;}
+
+/* MODAL */
+.modal-overlay{position:fixed!important;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:9999!important;backdrop-filter:blur(8px);}
+.modal-overlay.on{display:flex;}
+.modal{background:#0f0f2a;border:1px solid var(--accent);border-radius:20px;padding:42px 36px;text-align:center;max-width:400px;width:90%;box-shadow:0 0 30px rgba(0,245,160,.3);animation:popIn .4s ease;}
+@keyframes popIn{0%{transform:scale(.7);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.modal-ico{font-size:3.5rem;margin-bottom:12px;}
+.modal h2{font-size:1.35rem;color:var(--accent);margin-bottom:12px;}
+.modal p{color:var(--muted);font-size:.93rem;margin-bottom:20px;}
+.modal-note{font-size:.8rem!important;color:var(--accent3)!important;margin-bottom:13px!important;}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:20px;max-width:900px;margin:0 auto;}
+.contact-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px 20px;text-align:center;transition:border-color .3s,transform .3s;backdrop-filter:blur(10px);}
+.contact-card:hover{border-color:var(--accent);transform:translateY(-4px);}
+.ci{font-size:2.2rem;margin-bottom:11px;}
+.contact-card h4{font-family:'Orbitron',monospace;font-size:.75rem;color:var(--accent);margin-bottom:7px;text-transform:uppercase;}
+.contact-card p{color:var(--muted);font-size:.86rem;line-height:1.6;}
+
+/* FOOTER */
+.footer{background:rgba(0,0,0,.5);border-top:1px solid var(--border);text-align:center;padding:30px 20px;}
+.footer-logo{font-family:'Orbitron',monospace;font-size:1rem;color:#fff;margin-bottom:7px;}
+.footer p{color:var(--muted);font-size:.8rem;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
+[data-aos]{opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s;}
+[data-aos].vis{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:62px;left:0;right:0;background:#050510;padding:16px 5%;border-bottom:1px solid var(--border);gap:14px;}
+  .nav-links.open{display:flex;}
+  .hamburger{display:block;}
+  .float-badge{display:none;}
+  .book-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND CANVAS -->
+<canvas id="gc"></canvas>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">🎮 FinTech <span class="highlight">Gaming</span></div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#games">Games</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#booking">Booking</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <p class="hero-tag">Karachi's #1 Gaming Zone</p>
+    <h1 class="hero-title">LEVEL UP YOUR<br/><span class="neon-text">GAME LIFE</span></h1>
+    <p class="hero-sub">Xbox • PS5 • Counter-Strike • FIFA • And More!</p>
+    <div class="hero-btns">
+      <a href="#booking" class="btn-primary">Book Now</a>
+      <a href="#games" class="btn-outline">See Games</a>
+    </div>
+  </div>
+  <div class="float-badge b1">🕹️ Xbox Series X</div>
+  <div class="float-badge b2">🎯 CS2</div>
+  <div class="float-badge b3">🏆 PS5</div>
+  <div class="float-badge b4">⚽ FIFA 25</div>
+</section>
+
+<!-- GAMES -->
+<section class="section games-section" id="games">
+  <div class="sec-hd"><h2>Our <span class="highlight">Games</span></h2><p>Sab se best gaming experience sirf FinTech Gaming mein</p></div>
+  <div class="games-grid">
+    <div class="game-card" data-aos><div class="gi">🎮</div><h3>Xbox Series X</h3><p>Forza, Halo Infinite aur bahut kuch</p><span class="gtag">2 Controllers</span></div>
+    <div class="game-card" data-aos><div class="gi">🕹️</div><h3>PlayStation 5</h3><p>God of War, Spider-Man 2, Call of Duty</p><span class="gtag">DualSense</span></div>
+    <div class="game-card" data-aos><div class="gi">💻</div><h3>Counter-Strike 2</h3><p>High-end PC – lag-free competitive gaming</p><span class="gtag">144Hz Monitor</span></div>
+    <div class="game-card" data-aos><div class="gi">⚽</div><h3>FIFA 25</h3><p>Friends k saath tournament mode</p><span class="gtag">Multiplayer</span></div>
+    <div class="game-card" data-aos><div class="gi">🏎️</div><h3>Forza Motorsport</h3><p>Racing ka maza console aur PC dono par</p><span class="gtag">Racing Wheel</span></div>
+    <div class="game-card" data-aos><div class="gi">🎯</div><h3>Valorant</h3><p>Ranked matches – apni team banao</p><span class="gtag">PC Gaming</span></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing-section" id="pricing">
+  <div class="sec-hd"><h2><span class="highlight">Pricing</span> Plans</h2><p>Affordable rates – sab k liye</p></div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <h3>Basic</h3><p class="price">Rs. 100 <span>/hour</span></p>
+      <ul class="pf"><li>✅ 1 Console</li><li>✅ 1 Player</li><li>✅ Free Snack</li><li>❌ Private Room</li></ul>
+      <a href="#booking" class="btn-primary sm">Book Now</a>
+    </div>
+    <div class="price-card feat">
+      <div class="pop-badge">Most Popular</div>
+      <h3>Group</h3><p class="price">Rs. 300 <span>/2 hours</span></p>
+      <ul class="pf"><li>✅ All Consoles + PC</li><li>✅ 4 Players</li><li>✅ Free Snacks x4</li><li>✅ Private Room</li></ul>
+      <a href="#booking" class="btn-primary sm">Book Now</a>
+    </div>
+    <div class="price-card">
+      <h3>Party</h3><p class="price">Rs. 800 <span>/day</span></p>
+      <ul class="pf"><li>✅ Sab kuch unlimited</li><li>✅ 10 Players</li><li>✅ Full Refreshments</li><li>✅ Birthday Setup FREE</li></ul>
+      <a href="#booking" class="btn-primary sm">Book Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="section booking-section" id="booking">
+  <div class="sec-hd"><h2>Book Your <span class="highlight">Slot</span></h2><p>Online booking – Easy Paisa se payment!</p></div>
+  <div class="book-wrap">
+    <div class="book-form-box">
+      <form class="bform" onsubmit="submitBooking(event)">
+        <div class="fg"><label>Aapka Naam</label><input type="text" id="name" placeholder="Ahmed Ali" required/></div>
+        <div class="fg"><label>Phone</label><input type="tel" id="phone" placeholder="03XX-XXXXXXX" required/></div>
+        <div class="fg"><label>Game</label>
+          <select id="game" required>
+            <option value="">-- Game Chunein --</option>
+            <option>Xbox Series X</option><option>PlayStation 5</option>
+            <option>Counter-Strike 2</option><option>FIFA 25</option>
+            <option>Forza Motorsport</option><option>Valorant</option>
+          </select>
+        </div>
+        <div class="fg"><label>Package</label>
+          <select id="package" required>
+            <option value="">-- Package --</option>
+            <option value="Basic Rs.100/hr">Basic – Rs.100/hr</option>
+            <option value="Group Rs.300/2hrs">Group – Rs.300/2hrs</option>
+            <option value="Party Rs.800/day">Party – Rs.800/day</option>
+          </select>
+        </div>
+        <div class="fg"><label>Date</label><input type="date" id="date" required/></div>
+        <div class="fg"><label>Time Slot</label>
+          <select id="timeslot" required>
+            <option value="">-- Time --</option>
+            <option>10AM–12PM</option><option>12PM–2PM</option>
+            <option>2PM–4PM</option><option>4PM–6PM</option>
+            <option>6PM–8PM</option><option>8PM–10PM</option>
+          </select>
+        </div>
+        <div class="fg"><label>Players</label><input type="number" id="players" min="1" max="10" placeholder="1" required/></div>
+        <button type="submit" class="btn-primary full">Confirm Booking →</button>
+      </form>
+    </div>
+    <div class="pay-info">
+      <div class="pay-card">
+        <h3>💚 Easy Paisa Payment</h3>
+        <div class="ep-box">
+          <p class="ep-lbl">Account Number</p>
+          <p class="ep-num">0312-3456789</p>
+          <p class="ep-name">FinTech Gaming Zone</p>
+        </div>
+        <div class="ep-steps">
+          <h4>Steps:</h4>
+          <ol><li>Easy Paisa app kholo</li><li>Send Money pe jao</li><li>Number enter karo</li><li>Amount bhejo</li><li>Screenshot WhatsApp karo</li></ol>
+        </div>
+        <a href="https://wa.me/923123456789" target="_blank" class="btn-wa">📱 WhatsApp Screenshot</a>
+      </div>
+      <div class="rules-box">
+        <h4>📋 Rules</h4>
+        <ul>
+          <li>Advance payment zaroori</li>
+          <li>Cancel 2 ghante pehle</li>
+          <li>Guardian saath ho</li>
+          <li>Samaan sambhal kar rakhein</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="mo">
+  <div class="modal">
+    <div class="modal-ico">🎉</div>
+    <h2>Booking Confirmed!</h2>
+    <p id="mt">Loading...</p>
+    <p class="modal-note">Easy Paisa se payment karo aur screenshot bhejo.</p>
+    <button onclick="closeModal()" class="btn-primary">Close</button>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section class="section contact-section" id="contact">
+  <div class="sec-hd"><h2><span class="highlight">Contact</span> Us</h2><p>Koi bhi sawaal ho – hum yahan hain!</p></div>
+  <div class="contact-grid">
+    <div class="contact-card"><div class="ci">📍</div><h4>Address</h4><p>Shop 5, Gulshan Block 13,<br/>Karachi</p></div>
+    <div class="contact-card"><div class="ci">📞</div><h4>Phone / WhatsApp</h4><p>0312-3456789</p></div>
+    <div class="contact-card"><div class="ci">🕐</div><h4>Hours</h4><p>Roz 10AM – 10PM</p></div>
+    <div class="contact-card"><div class="ci">📧</div><h4>Email</h4><p>info@fintechgaming.pk</p></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">🎮 FinTech <span class="highlight">Gaming</span></div>
+  <p>© 2025 FinTech Gaming Zone – Karachi, Pakistan</p>
+</footer>
+
+<script>
+// ============================================================
+//  GAMING BACKGROUND CANVAS
+// ============================================================
+const canvas = document.getElementById('gc');
+const ctx    = canvas.getContext('2d');
+
+function resize(){
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ---------- GRID ----------
+function drawGrid(){
+  ctx.save();
+  ctx.strokeStyle = 'rgba(124,58,237,0.07)';
+  ctx.lineWidth   = 0.5;
+  for(let x=0;x<canvas.width;x+=65){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+  for(let y=0;y<canvas.height;y+=65){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+  ctx.restore();
+}
+
+// ---------- MATRIX RAIN ----------
+const MC = Math.floor(window.innerWidth/18);
+const MD = Array.from({length:MC}, ()=> Math.random()*-60);
+const MS = 'XBOXPS5GODOFWARKILLCSGOFIFAHEADSHOTFRAGGGWIN1337PWN';
+function drawMatrix(){
+  ctx.save();
+  ctx.font = '12px monospace';
+  for(let i=0;i<MD.length;i++){
+    const ch = MS[Math.floor(Math.random()*MS.length)];
+    ctx.fillStyle = `rgba(0,245,160,${Math.random()*.1+.02})`;
+    ctx.fillText(ch, i*18, MD[i]*18);
+    if(MD[i]*18 > canvas.height && Math.random()>.976) MD[i]=0;
+    MD[i] += .3;
+  }
+  ctx.restore();
+}
+
+// ---------- ORBS ----------
+const orbs = Array.from({length:5}, ()=>({
+  x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+  r:Math.random()*90+50, p:Math.random()*Math.PI*2,
+  col:Math.random()>.5?'0,245,160':'124,58,237',
+  mx:(Math.random()-.5)*.22, my:(Math.random()-.5)*.22
+}));
+function drawOrbs(){
+  orbs.forEach(o=>{
+    o.p+=.007; o.x+=o.mx; o.y+=o.my;
+    if(o.x<0||o.x>canvas.width)  o.mx*=-1;
+    if(o.y<0||o.y>canvas.height) o.my*=-1;
+    const sc = .85+Math.sin(o.p)*.15;
+    const g  = ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r*sc);
+    g.addColorStop(0,`rgba(${o.col},.07)`);
+    g.addColorStop(1,`rgba(${o.col},0)`);
+    ctx.beginPath(); ctx.arc(o.x,o.y,o.r*sc,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
+  });
+}
+
+// ---------- LASER BULLETS ----------
+const BUL = Array.from({length:10}, mkB);
+function mkB(){
+  return{x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    len:Math.random()*80+30, spd:Math.random()*4+2, ang:Math.random()*Math.PI*2,
+    col:Math.random()>.5?'0,245,160':'245,158,11', life:0, max:Math.random()*90+40};
+}
+function drawBullets(){
+  BUL.forEach((b,i)=>{
+    b.x+=Math.cos(b.ang)*b.spd; b.y+=Math.sin(b.ang)*b.spd; b.life++;
+    const f=1-b.life/b.max;
+    ctx.save(); ctx.globalAlpha=.25*f;
+    ctx.strokeStyle=`rgb(${b.col})`; ctx.lineWidth=1.5;
+    ctx.shadowBlur=8; ctx.shadowColor=`rgba(${b.col},1)`;
+    ctx.beginPath(); ctx.moveTo(b.x,b.y);
+    ctx.lineTo(b.x-Math.cos(b.ang)*b.len, b.y-Math.sin(b.ang)*b.len);
+    ctx.stroke(); ctx.restore();
+    if(b.life>b.max||b.x<-200||b.x>canvas.width+200||b.y<-200||b.y>canvas.height+200)
+      BUL[i]=mkB();
+  });
+}
+
+// ---------- CROSSHAIR ----------
+let mx=canvas.width/2, my=canvas.height/2, chA=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+function drawCrosshair(){
+  chA+=.024;
+  ctx.save(); ctx.globalAlpha=.42; ctx.translate(mx,my);
+  ctx.strokeStyle='#00f5a0'; ctx.lineWidth=1.5;
+  ctx.shadowBlur=12; ctx.shadowColor='#00f5a0';
+  ctx.beginPath(); ctx.arc(0,0,13,0,Math.PI*2); ctx.stroke();
+  [0,Math.PI/2,Math.PI,Math.PI*1.5].forEach(a=>{
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a)*17,Math.sin(a)*17);
+    ctx.lineTo(Math.cos(a)*25,Math.sin(a)*25);
+    ctx.stroke();
+  });
+  ctx.rotate(chA); ctx.strokeStyle='rgba(0,245,160,.22)';
+  ctx.beginPath(); ctx.arc(0,0,20,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+}
+
+// ---------- SCANLINES ----------
+function drawScanlines(){
+  for(let y=0;y<canvas.height;y+=5){
+    ctx.fillStyle='rgba(0,0,0,0.016)';
+    ctx.fillRect(0,y,canvas.width,1);
+  }
+}
+
+// ============================================================
+//  CHARACTER BASE
+// ============================================================
+class Char{
+  constructor(){ this.ft=0; this.frame=0; this.reset(true); }
+  reset(init){
+    this.dir = Math.random()>.5?1:-1;
+    this.x   = this.dir===1 ? -260 : canvas.width+260;
+    this.y   = Math.random()*(canvas.height*.78)+60;
+    this.spd = (Math.random()*.55+.32)*this.dir;
+    this.sc  = Math.random()*.38+.45;
+    this.al  = Math.random()*.2+.1;
+    this.frame = 0;
+    if(init) this.x = Math.random()*canvas.width;
+  }
+  tick(){
+    this.x += this.spd; this.ft++;
+    if(this.ft>6){ this.frame=(this.frame+1)%8; this.ft=0; }
+    if((this.dir===1&&this.x>canvas.width+270)||(this.dir===-1&&this.x<-270)) this.reset(false);
+  }
+  draw(){
+    ctx.save();
+    ctx.globalAlpha = this.al;
+    ctx.translate(this.x, this.y);
+    if(this.dir===-1) ctx.scale(-1,1);
+    ctx.scale(this.sc, this.sc);
+    this.render();
+    ctx.restore();
+  }
+}
+
+// ============================================================
+//  CALL OF DUTY SOLDIER
+// ============================================================
+class Soldier extends Char{
+  render(){
+    const f=this.frame;
+    const leg = Math.sin(f/8*Math.PI*2)*20;
+    const arm = Math.sin(f/8*Math.PI*2+Math.PI)*18;
+    const bob = Math.abs(Math.sin(f/8*Math.PI*2))*5;
+
+    // shadow
+    ctx.save(); ctx.globalAlpha=.1; ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.ellipse(0,96+bob,30,7,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+
+    // back leg
+    ctx.save(); ctx.translate(0,54+bob); ctx.rotate((-leg+5)*Math.PI/180);
+    ctx.fillStyle='#1a2e10';
+    ctx.beginPath(); ctx.roundRect(-7,0,13,40,3); ctx.fill();
+    ctx.fillStyle='#0d1a08';
+    ctx.beginPath(); ctx.roundRect(-8,37,17,11,2); ctx.fill();
+    ctx.restore();
+
+    // torso / vest
+    ctx.save(); ctx.translate(0,bob);
+    ctx.fillStyle='#2d4a1e'; ctx.beginPath(); ctx.roundRect(-19,8,38,48,5); ctx.fill();
+    ctx.fillStyle='#1a3010'; ctx.beginPath(); ctx.roundRect(-14,12,28,22,3); ctx.fill();
+    ctx.fillStyle='#243d18'; ctx.beginPath(); ctx.roundRect(-13,14,11,9,2); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(2,14,11,9,2); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.roundRect(-19,52,38,7,2); ctx.fill();
+    ctx.restore();
+
+    // front leg
+    ctx.save(); ctx.translate(0,54+bob); ctx.rotate((leg-5)*Math.PI/180);
+    ctx.fillStyle='#2d4a1e';
+    ctx.beginPath(); ctx.roundRect(-6,0,13,40,3); ctx.fill();
+    ctx.fillStyle='#1a3010';
+    ctx.beginPath(); ctx.roundRect(-7,37,17,11,2); ctx.fill();
+    ctx.restore();
+
+    // back arm
+    ctx.save(); ctx.translate(-19,14+bob); ctx.rotate((-arm+10)*Math.PI/180);
+    ctx.fillStyle='#2d4a1e'; ctx.beginPath(); ctx.roundRect(-5,0,10,32,3); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.roundRect(-5,29,10,10,3); ctx.fill();
+    ctx.restore();
+
+    // head / helmet
+    ctx.save(); ctx.translate(0,bob);
+    ctx.fillStyle='#1a3010'; ctx.beginPath(); ctx.arc(0,-10,19,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#243d18'; ctx.beginPath(); ctx.roundRect(-19,-10,38,15,0); ctx.fill();
+    ctx.fillStyle='#080808'; ctx.beginPath(); ctx.roundRect(-13,-6,26,13,2); ctx.fill();
+    // goggle glow
+    ctx.fillStyle='rgba(0,245,160,.6)';
+    ctx.beginPath(); ctx.ellipse(-5,-1,5,4,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(5,-1,5,4,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,-5); ctx.lineTo(0,3); ctx.stroke();
+    ctx.restore();
+
+    // front arm + gun
+    ctx.save(); ctx.translate(19,14+bob); ctx.rotate((arm-10)*Math.PI/180);
+    ctx.fillStyle='#2d4a1e'; ctx.beginPath(); ctx.roundRect(-5,0,10,30,3); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.roundRect(-5,27,10,9,3); ctx.fill();
+    ctx.save(); ctx.translate(7,13); ctx.rotate(-18*Math.PI/180);
+    ctx.fillStyle='#0a0a0a'; ctx.beginPath(); ctx.roundRect(0,-5,52,10,3); ctx.fill();
+    ctx.fillStyle='#1a1a1a'; ctx.beginPath(); ctx.roundRect(32,-4,20,7,1); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.roundRect(18,4,12,18,2); ctx.fill();
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.roundRect(10,-10,18,6,2); ctx.fill();
+    ctx.fillStyle='rgba(0,245,160,.75)';
+    ctx.beginPath(); ctx.arc(52,0,3.5,0,Math.PI*2); ctx.fill();
+    ctx.restore(); ctx.restore();
+  }
+}
+
+// ============================================================
+//  SPIDER-MAN
+// ============================================================
+class SpiderMan extends Char{
+  constructor(){
+    super();
+    this.swA  = Math.random()*Math.PI*2;
+    this.webL = 150;
+    this.swS  = .022;
+    this.y    = Math.random()*(canvas.height*.38)+80;
+    this.ft   = 0; this.frame=0;
+  }
+  reset(init){
+    super.reset(init);
+    this.y   = Math.random()*(canvas.height*.38)+80;
+    this.swA = Math.random()*Math.PI*2;
+    this.spd = (Math.random()*.6+.45)*this.dir;
+  }
+  tick(){
+    this.x  += this.spd;
+    this.swA += this.swS;
+    this.ft++;
+    if(this.ft>5){ this.frame=(this.frame+1)%12; this.ft=0; }
+    if((this.dir===1&&this.x>canvas.width+270)||(this.dir===-1&&this.x<-270)) this.reset(false);
+  }
+  render(){
+    const f   = this.frame;
+    const swY = Math.sin(this.swA)*28;
+    const lean= Math.cos(this.swA)*15;
+
+    // web rope
+    ctx.save();
+    ctx.strokeStyle='rgba(210,210,210,.38)'; ctx.lineWidth=1.5;
+    ctx.setLineDash([4,5]);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-this.webL+swY*.5); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+
+    ctx.save(); ctx.translate(0,swY); ctx.rotate(lean*Math.PI/180);
+
+    // legs
+    const ls = 22+Math.abs(Math.sin(f/12*Math.PI))*18;
+    ctx.fillStyle='#1a0055';
+    // left leg
+    ctx.beginPath(); ctx.moveTo(-5,28);
+    ctx.quadraticCurveTo(-ls,48,-ls+10,68);
+    ctx.lineTo(-ls+18,66);
+    ctx.quadraticCurveTo(-ls+8,46,2,26); ctx.closePath(); ctx.fill();
+    // right leg
+    ctx.beginPath(); ctx.moveTo(5,28);
+    ctx.quadraticCurveTo(ls,48,ls-10,68);
+    ctx.lineTo(ls-18,66);
+    ctx.quadraticCurveTo(ls-8,46,-2,26); ctx.closePath(); ctx.fill();
+
+    // body
+    ctx.fillStyle='#cc0000'; ctx.beginPath(); ctx.roundRect(-17,0,34,38,6); ctx.fill();
+    // chest spider
+    ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1.2;
+    for(let i=0;i<3;i++){
+      const a=(-30+i*20)*Math.PI/180;
+      ctx.beginPath(); ctx.moveTo(0,10); ctx.lineTo(-Math.cos(a)*14,10+Math.sin(a)*14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,10); ctx.lineTo( Math.cos(a)*14,10+Math.sin(a)*14); ctx.stroke();
+    }
+
+    // back arm
+    const aA = Math.sin(f/12*Math.PI*2)*18;
+    ctx.save(); ctx.translate(-17,8); ctx.rotate((-38+aA)*Math.PI/180);
+    ctx.fillStyle='#cc0000'; ctx.beginPath(); ctx.roundRect(-5,0,10,26,4); ctx.fill();
+    ctx.fillStyle='#ffdddd'; ctx.beginPath(); ctx.roundRect(-5,23,10,10,4); ctx.fill();
+    ctx.fillStyle='rgba(180,200,255,.7)'; ctx.beginPath(); ctx.arc(-4,23,4,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    // front arm
+    ctx.save(); ctx.translate(17,8); ctx.rotate((38-aA)*Math.PI/180);
+    ctx.fillStyle='#cc0000'; ctx.beginPath(); ctx.roundRect(-5,0,10,26,4); ctx.fill();
+    ctx.fillStyle='#ffdddd'; ctx.beginPath(); ctx.roundRect(-5,23,10,10,4); ctx.fill();
+    ctx.restore();
+
+    // head
+    ctx.fillStyle='#cc0000'; ctx.beginPath(); ctx.ellipse(0,-14,17,19,0,0,Math.PI*2); ctx.fill();
+    // eyes
+    ctx.save(); ctx.translate(-6,-17); ctx.rotate(-15*Math.PI/180);
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(0,0,6,8,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(0,0,5,7,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    ctx.save(); ctx.translate(6,-17); ctx.rotate(15*Math.PI/180);
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(0,0,6,8,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(0,0,5,7,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    // suit lines
+    ctx.strokeStyle='rgba(0,0,0,.18)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,-32); ctx.quadraticCurveTo(-17,-14,-17,4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-32); ctx.quadraticCurveTo(17,-14,17,4); ctx.stroke();
+
+    ctx.restore();
+  }
+}
+
+// ============================================================
+//  PS5 DUALSENSE
+// ============================================================
+class PS5 extends Char{
+  constructor(){ super(); this.pulse=Math.random()*Math.PI*2; }
+  render(){
+    this.pulse+=.045;
+    const g  = .42+Math.sin(this.pulse)*.22;
+    const bob= Math.sin(this.pulse)*9;
+    ctx.save(); ctx.translate(0,bob);
+
+    // aura
+    const aura=ctx.createRadialGradient(0,0,10,0,0,95);
+    aura.addColorStop(0,`rgba(0,100,255,${g*.28})`); aura.addColorStop(1,'rgba(0,100,255,0)');
+    ctx.beginPath(); ctx.arc(0,0,95,0,Math.PI*2); ctx.fillStyle=aura; ctx.fill();
+
+    // grips
+    ctx.fillStyle='#dcdce2';
+    ctx.beginPath(); ctx.moveTo(-52,-13);
+    ctx.bezierCurveTo(-74,-8,-80,28,-70,58); ctx.bezierCurveTo(-62,74,-48,76,-38,66);
+    ctx.bezierCurveTo(-28,56,-18,26,-8,16); ctx.lineTo(-8,-13); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(52,-13);
+    ctx.bezierCurveTo(74,-8,80,28,70,58); ctx.bezierCurveTo(62,74,48,76,38,66);
+    ctx.bezierCurveTo(28,56,18,26,8,16); ctx.lineTo(8,-13); ctx.closePath(); ctx.fill();
+
+    // center
+    ctx.fillStyle='#ccccd4'; ctx.beginPath(); ctx.roundRect(-50,-27,100,54,17); ctx.fill();
+    // touchpad
+    ctx.fillStyle='#aaaab4'; ctx.beginPath(); ctx.roundRect(-22,-18,44,22,6); ctx.fill();
+    ctx.strokeStyle='#888890'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,-18); ctx.lineTo(0,4); ctx.stroke();
+
+    // sticks
+    ctx.fillStyle='#444450'; ctx.beginPath(); ctx.arc(-30,18,13,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#222228'; ctx.beginPath(); ctx.arc(-30,18,8,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#444450'; ctx.beginPath(); ctx.arc(18,20,13,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#222228'; ctx.beginPath(); ctx.arc(18,20,8,0,Math.PI*2); ctx.fill();
+
+    // dpad
+    ctx.fillStyle='#aaaabc';
+    ctx.beginPath(); ctx.roundRect(-47,-8,14,6,2); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(-43,-14,6,18,2); ctx.fill();
+
+    // buttons
+    ctx.fillStyle=`rgba(100,220,180,${.7+Math.sin(this.pulse)*.3})`;
+    ctx.beginPath(); ctx.moveTo(38,-19); ctx.lineTo(31,-8); ctx.lineTo(45,-8); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle=`rgba(240,80,80,${.8+Math.sin(this.pulse+1)*.2})`; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.arc(46,-4,5,0,Math.PI*2); ctx.stroke();
+    ctx.strokeStyle=`rgba(100,140,240,${.8+Math.sin(this.pulse+2)*.2})`; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(33,1); ctx.lineTo(40,8); ctx.moveTo(40,1); ctx.lineTo(33,8); ctx.stroke();
+    ctx.strokeStyle=`rgba(240,130,200,${.8+Math.sin(this.pulse+3)*.2})`; ctx.lineWidth=2;
+    ctx.strokeRect(26,-5,11,11);
+
+    // L1 R1
+    ctx.fillStyle='#c8c8d0';
+    ctx.beginPath(); ctx.roundRect(-50,-40,24,11,4); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(26,-40,24,11,4); ctx.fill();
+
+    // lightbar
+    const lb=ctx.createLinearGradient(-44,27,44,27);
+    lb.addColorStop(0,'rgba(0,80,255,0)');
+    lb.addColorStop(.3,`rgba(0,120,255,${g})`);
+    lb.addColorStop(.7,`rgba(0,120,255,${g})`);
+    lb.addColorStop(1,'rgba(0,80,255,0)');
+    ctx.beginPath(); ctx.roundRect(-44,26,88,6,3); ctx.fillStyle=lb; ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ============================================================
+//  XBOX CONTROLLER
+// ============================================================
+class Xbox extends Char{
+  constructor(){ super(); this.pulse=Math.random()*Math.PI*2; }
+  render(){
+    this.pulse+=.038;
+    const g  = .42+Math.sin(this.pulse)*.22;
+    const bob= Math.sin(this.pulse+.8)*9;
+    ctx.save(); ctx.translate(0,bob);
+
+    // aura (green)
+    const aura=ctx.createRadialGradient(0,0,10,0,0,95);
+    aura.addColorStop(0,`rgba(16,124,16,${g*.32})`); aura.addColorStop(1,'rgba(16,124,16,0)');
+    ctx.beginPath(); ctx.arc(0,0,95,0,Math.PI*2); ctx.fillStyle=aura; ctx.fill();
+
+    // grips
+    ctx.fillStyle='#1c1c1c';
+    ctx.beginPath(); ctx.moveTo(-50,-12);
+    ctx.bezierCurveTo(-72,-7,-78,26,-68,54); ctx.bezierCurveTo(-60,68,-44,70,-34,60);
+    ctx.bezierCurveTo(-24,50,-16,24,-7,14); ctx.lineTo(-7,-12); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(50,-12);
+    ctx.bezierCurveTo(72,-7,78,26,68,54); ctx.bezierCurveTo(60,68,44,70,34,60);
+    ctx.bezierCurveTo(24,50,16,24,7,14); ctx.lineTo(7,-12); ctx.closePath(); ctx.fill();
+
+    // center
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.roundRect(-48,-25,96,50,16); ctx.fill();
+
+    // glowing X button
+    const xg=ctx.createRadialGradient(0,-3,2,0,-3,16);
+    xg.addColorStop(0,`rgba(50,200,50,${.85+Math.sin(this.pulse)*.15})`);
+    xg.addColorStop(1,'rgba(14,74,14,.8)');
+    ctx.beginPath(); ctx.arc(0,-3,14,0,Math.PI*2); ctx.fillStyle=xg; ctx.fill();
+    ctx.strokeStyle=`rgba(80,230,80,${g*.8})`; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(0,-3,14,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 11px Orbitron,monospace'; ctx.textAlign='center';
+    ctx.fillText('X',0,1); ctx.textAlign='start';
+
+    // sticks
+    ctx.fillStyle='#2e2e2e'; ctx.beginPath(); ctx.arc(-28,13,13,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#404040'; ctx.beginPath(); ctx.arc(-28,13,8,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#2e2e2e'; ctx.beginPath(); ctx.arc(16,20,13,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#404040'; ctx.beginPath(); ctx.arc(16,20,8,0,Math.PI*2); ctx.fill();
+
+    // dpad
+    ctx.fillStyle='#333';
+    ctx.beginPath(); ctx.roundRect(-46,-2,13,6,2); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(-42,-8,5,18,2); ctx.fill();
+
+    // A B X Y buttons
+    [{x:44,y:5,c:'rgba(80,200,80,.9)',l:'A'},
+     {x:58,y:-7,c:'rgba(210,60,60,.9)',l:'B'},
+     {x:30,y:-7,c:'rgba(70,110,220,.9)',l:'X'},
+     {x:44,y:-19,c:'rgba(220,220,70,.9)',l:'Y'}]
+    .forEach(b=>{
+      ctx.fillStyle=b.c; ctx.beginPath(); ctx.arc(b.x,b.y,8,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#000'; ctx.font='bold 7px Arial'; ctx.textAlign='center';
+      ctx.fillText(b.l,b.x,b.y+3); ctx.textAlign='start';
+    });
+
+    // LB RB
+    ctx.fillStyle='#2a2a2a';
+    ctx.beginPath(); ctx.roundRect(-48,-37,22,10,3); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(26,-37,22,10,3); ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ============================================================
+//  SPAWN ALL CHARACTERS
+// ============================================================
+const chars = [];
+for(let i=0;i<5;i++) chars.push(new Soldier());
+for(let i=0;i<3;i++) chars.push(new SpiderMan());
+for(let i=0;i<4;i++) chars.push(new PS5());
+for(let i=0;i<4;i++) chars.push(new Xbox());
+
+// ============================================================
+//  MAIN RENDER LOOP
+// ============================================================
+let frame=0;
+function loop(){
+  frame++;
+
+  // dark trail (NOT full clear — keeps ghost effect)
+  ctx.fillStyle='rgba(5,5,16,0.18)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  drawGrid();
+  drawOrbs();
+  if(frame%2===0) drawMatrix();
+  drawBullets();
+
+  // sort by scale for depth
+  chars.sort((a,b)=>a.sc-b.sc);
+  chars.forEach(c=>{ c.tick(); c.draw(); });
+
+  drawScanlines();
+  drawCrosshair();
+
+  requestAnimationFrame(loop);
+}
+loop();
+
+// ============================================================
+//  UI LOGIC
+// ============================================================
+function toggleMenu(){ document.querySelector('.nav-links').classList.toggle('open'); }
+document.querySelectorAll('.nav-links a').forEach(l=>
+  l.addEventListener('click',()=>document.querySelector('.nav-links').classList.remove('open'))
+);
+window.addEventListener('scroll',()=>{
+  document.querySelector('.navbar').style.background =
+    window.scrollY>50 ? 'rgba(5,5,16,0.98)' : 'rgba(5,5,16,0.88)';
+});
+window.addEventListener('DOMContentLoaded',()=>{
+  const d=document.getElementById('date');
+  if(d) d.min=new Date().toISOString().split('T')[0];
+});
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{ if(e.isIntersecting) setTimeout(()=>e.target.classList.add('vis'),i*100); });
+},{threshold:.1});
+document.querySelectorAll('[data-aos]').forEach(el=>obs.observe(el));
+
+function submitBooking(e){
+  e.preventDefault();
+  const n=document.getElementById('name').value.trim();
+  const ph=document.getElementById('phone').value.trim();
+  const gm=document.getElementById('game').value;
+  const pk=document.getElementById('package').value;
+  const dt=document.getElementById('date').value;
+  const tm=document.getElementById('timeslot').value;
+  const pl=document.getElementById('players').value;
+  const dtF=dt?new Date(dt).toLocaleDateString('en-PK',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'';
+  document.getElementById('mt').innerHTML=
+    `<strong>${n}</strong> ki booking confirm!<br><br>
+     🎮 <strong>Game:</strong> ${gm}<br>
+     📦 <strong>Package:</strong> ${pk}<br>
+     📅 <strong>Date:</strong> ${dtF}<br>
+     🕐 <strong>Time:</strong> ${tm}<br>
+     👥 <strong>Players:</strong> ${pl}<br>
+     📞 <strong>Phone:</strong> ${ph}`;
+  document.getElementById('mo').classList.add('on');
+  e.target.reset();
+}
+function closeModal(){ document.getElementById('mo').classList.remove('on'); }
+document.getElementById('mo').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+</script>
+</body>
+</html>
